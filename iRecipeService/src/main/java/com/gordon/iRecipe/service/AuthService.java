@@ -1,6 +1,8 @@
 package com.gordon.iRecipe.service;
 
 import com.gordon.iRecipe.dto.RegisterRequest;
+import com.gordon.iRecipe.exception.iRecipeException;
+import com.gordon.iRecipe.model.NotificationEmail;
 import com.gordon.iRecipe.model.User;
 import com.gordon.iRecipe.model.VerificationToken;
 import com.gordon.iRecipe.repository.UserRepository;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -20,11 +23,12 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final VerificationTokenRepository verificationTokenRepository;
+    private final MailService mailService;
 
     @Transactional
     public void signup(RegisterRequest registerRequest){
         User user = new User();
-        user.setUsername(registerRequest.getUserName());
+        user.setUsername(registerRequest.getUsername());
         user.setEmail(registerRequest.getEmail());
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
         user.setCreated(Instant.now());
@@ -33,6 +37,8 @@ public class AuthService {
         userRepository.save(user);
 
         String token = generateVerificationToken(user);
+        mailService.sendMail(new NotificationEmail("Please Activate Your Account.",
+                user.getEmail(), "Thanks. Activate here: http://localhost:8080/api/auth/accountVerification/" + token));
     }
 
     private String generateVerificationToken(User user) {
@@ -41,8 +47,23 @@ public class AuthService {
         verificationToken.setToken(token);
         verificationToken.setUser(user);
 
+        verificationTokenRepository.save(verificationToken);
         return token;
     }
 
 
+    public void verifyAccount(String token) {
+        Optional<VerificationToken> verificationToken = verificationTokenRepository.findByToken(token);
+        verificationToken.orElseThrow(() -> new iRecipeException("Invalid Token."));
+        fetchUserAndEnable(verificationToken.get());
+    }
+
+    @Transactional
+    private void fetchUserAndEnable(VerificationToken verificationToken) {
+        String username = verificationToken.getUser().getUsername();
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new iRecipeException("User not found. Username: " + username));
+        user.setEnabled(true);
+        userRepository.save(user);
+
+    }
 }
