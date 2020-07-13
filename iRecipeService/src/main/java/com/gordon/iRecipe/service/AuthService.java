@@ -1,5 +1,6 @@
 package com.gordon.iRecipe.service;
 
+import com.gordon.iRecipe.dto.LoginRequest;
 import com.gordon.iRecipe.dto.RegisterRequest;
 import com.gordon.iRecipe.exception.iRecipeException;
 import com.gordon.iRecipe.model.NotificationEmail;
@@ -8,6 +9,8 @@ import com.gordon.iRecipe.model.VerificationToken;
 import com.gordon.iRecipe.repository.UserRepository;
 import com.gordon.iRecipe.repository.VerificationTokenRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +27,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final VerificationTokenRepository verificationTokenRepository;
     private final MailService mailService;
+    private final AuthenticationManager authenticationManager;
 
     @Transactional
     public void signup(RegisterRequest registerRequest){
@@ -65,5 +69,9 @@ public class AuthService {
         user.setEnabled(true);
         userRepository.save(user);
 
+    }
+
+    public void login(LoginRequest loginRequest) {
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
     }
 }
