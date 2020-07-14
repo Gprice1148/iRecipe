@@ -1,5 +1,6 @@
 package com.gordon.iRecipe.controller;
 
+import com.gordon.iRecipe.dto.AuthenticationResponse;
 import com.gordon.iRecipe.dto.LoginRequest;
 import com.gordon.iRecipe.dto.RegisterRequest;
 import com.gordon.iRecipe.service.AuthService;
@@ -29,8 +30,8 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public void login(@RequestBody LoginRequest loginRequest) {
-        authService.login(loginRequest);
+    public AuthenticationResponse login(@RequestBody LoginRequest loginRequest) {
+            return authService.login(loginRequest);
     }
 
 }

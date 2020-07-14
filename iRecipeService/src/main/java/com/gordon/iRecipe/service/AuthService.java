@@ -1,5 +1,6 @@
 package com.gordon.iRecipe.service;
 
+import com.gordon.iRecipe.dto.AuthenticationResponse;
 import com.gordon.iRecipe.dto.LoginRequest;
 import com.gordon.iRecipe.dto.RegisterRequest;
 import com.gordon.iRecipe.exception.iRecipeException;
@@ -8,9 +9,12 @@ import com.gordon.iRecipe.model.User;
 import com.gordon.iRecipe.model.VerificationToken;
 import com.gordon.iRecipe.repository.UserRepository;
 import com.gordon.iRecipe.repository.VerificationTokenRepository;
+import com.gordon.iRecipe.security.JwtProvider;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +32,7 @@ public class AuthService {
     private final VerificationTokenRepository verificationTokenRepository;
     private final MailService mailService;
     private final AuthenticationManager authenticationManager;
+    private final JwtProvider jwtProvider;
 
     @Transactional
     public void signup(RegisterRequest registerRequest){
@@ -55,7 +60,6 @@ public class AuthService {
         return token;
     }
 
-
     public void verifyAccount(String token) {
         Optional<VerificationToken> verificationToken = verificationTokenRepository.findByToken(token);
         verificationToken.orElseThrow(() -> new iRecipeException("Invalid Token."));
@@ -71,7 +75,10 @@ public class AuthService {
 
     }
 
-    public void login(LoginRequest loginRequest) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+    public AuthenticationResponse login(LoginRequest loginRequest) {
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String token = jwtProvider.generateToken(authentication);
+        return new AuthenticationResponse(token, loginRequest.getUsername());
     }
 }
