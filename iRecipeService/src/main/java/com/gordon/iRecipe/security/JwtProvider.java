@@ -11,10 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.*;
 import java.security.cert.CertificateException;
-import java.time.Instant;
-import java.util.Date;
 
-import static java.util.Date.from;
 
 @Service
 public class JwtProvider {
@@ -24,16 +21,17 @@ public class JwtProvider {
     @PostConstruct
     public void init() {
         try {
-            keyStore = KeyStore.getInstance("JKS");
-            InputStream resourceAsStream = getClass().getResourceAsStream("/irecipeKeyStore.jks");
-            keyStore.load(resourceAsStream, "secret".toCharArray());
+            keyStore = KeyStore.getInstance("PKCS12");
+            InputStream resourceAsStream = getClass().getResourceAsStream("/irecipe.jks");
+
+            keyStore.load(resourceAsStream, "keystore".toCharArray());
         } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException | IOException e) {
             throw new iRecipeException("Exception occurred while loading keystore", e);
         }
     }
 
         public String generateToken(Authentication authentication) {
-            User principal = (User) authentication.getPrincipal();
+            org.springframework.security.core.userdetails.User principal = (User) authentication.getPrincipal();
             return Jwts.builder()
                     .setSubject(principal.getUsername())
                     .signWith(getPrivateKey())
@@ -42,7 +40,7 @@ public class JwtProvider {
 
     private PrivateKey getPrivateKey() {
         try {
-            return (PrivateKey) keyStore.getKey("irecipeKeyStore", "secret".toCharArray());
+            return (PrivateKey) keyStore.getKey("irecipe", "keystore".toCharArray());
         } catch (KeyStoreException | NoSuchAlgorithmException | UnrecoverableEntryException e) {
             throw new iRecipeException("Exception occurred while retrieving public key from keystore ", e);
         }
