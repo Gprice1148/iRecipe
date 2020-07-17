@@ -1,6 +1,6 @@
 package com.gordon.iRecipe.service;
 
-import com.gordon.iRecipe.exception.iRecipeException;
+import com.gordon.iRecipe.exception.IRecipeException;
 import com.gordon.iRecipe.model.NotificationEmail;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +32,7 @@ public class MailService {
             mailSender.send(messagePreparator);
             log.info("Activation sent");
         } catch (MailException e) {
-           throw new iRecipeException("Exception occurred when sending email to: " + notificationEmail.getRecipient());
+           throw new IRecipeException("Exception occurred when sending email to: " + notificationEmail.getRecipient());
         }
     }
 }

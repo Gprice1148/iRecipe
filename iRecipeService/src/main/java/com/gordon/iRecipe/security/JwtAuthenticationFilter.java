@@ -21,6 +21,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
     JwtProvider jwtProvider;
+
+    @Autowired
     UserDetailsService userDetailService;
 
 
@@ -42,7 +44,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if(StringUtils.hasText(jwt) && jwtProvider.validateToken(jwt)) {
             String username = jwtProvider.getUsernameFromJwt(jwt);
-
+            System.out.println("Username: " + username);
             UserDetails userDetails = userDetailService.loadUserByUsername(username);
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails,
                     null, userDetails.getAuthorities());

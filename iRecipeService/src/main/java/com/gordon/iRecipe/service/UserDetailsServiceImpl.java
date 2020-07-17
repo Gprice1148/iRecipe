@@ -1,6 +1,6 @@
 package com.gordon.iRecipe.service;
 
-import com.gordon.iRecipe.exception.iRecipeException;
+import com.gordon.iRecipe.exception.IRecipeException;
 import com.gordon.iRecipe.model.User;
 import com.gordon.iRecipe.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -8,7 +8,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -25,10 +24,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     @Transactional
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username) {
         Optional<User> userOptional = userRepository.findByUsername(username);
         User user = userOptional
-                .orElseThrow(() -> new iRecipeException("No user found with the username: " + username));
+                .orElseThrow(() -> new IRecipeException("No user found with the username: " + username));
 
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
                 user.isEnabled(), true, true,

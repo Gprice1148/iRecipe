@@ -3,7 +3,7 @@ package com.gordon.iRecipe.service;
 import com.gordon.iRecipe.dto.AuthenticationResponse;
 import com.gordon.iRecipe.dto.LoginRequest;
 import com.gordon.iRecipe.dto.RegisterRequest;
-import com.gordon.iRecipe.exception.iRecipeException;
+import com.gordon.iRecipe.exception.IRecipeException;
 import com.gordon.iRecipe.model.NotificationEmail;
 import com.gordon.iRecipe.model.User;
 import com.gordon.iRecipe.model.VerificationToken;
@@ -62,14 +62,17 @@ public class AuthService {
 
     public void verifyAccount(String token) {
         Optional<VerificationToken> verificationToken = verificationTokenRepository.findByToken(token);
-        verificationToken.orElseThrow(() -> new iRecipeException("Invalid Token."));
-        fetchUserAndEnable(verificationToken.get());
+        if (verificationToken.isPresent()) {
+            fetchUserAndEnable(verificationToken.get());
+        } else {
+            throw new IRecipeException("Invalid Token.");
+        }
     }
 
     @Transactional
     private void fetchUserAndEnable(VerificationToken verificationToken) {
         String username = verificationToken.getUser().getUsername();
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new iRecipeException("User not found. Username: " + username));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new IRecipeException("User not found. Username: " + username));
         user.setEnabled(true);
         userRepository.save(user);
 

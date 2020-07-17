@@ -1,6 +1,6 @@
 package com.gordon.iRecipe.security;
 
-import com.gordon.iRecipe.exception.iRecipeException;
+import com.gordon.iRecipe.exception.IRecipeException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.security.core.Authentication;
@@ -29,7 +29,7 @@ public class JwtProvider {
 
             keyStore.load(resourceAsStream, "keystore".toCharArray());
         } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException | IOException e) {
-            throw new iRecipeException("Exception occurred while loading keystore", e);
+            throw new IRecipeException("Exception occurred while loading keystore", e);
         }
     }
 
@@ -45,7 +45,7 @@ public class JwtProvider {
         try {
             return (PrivateKey) keyStore.getKey("irecipe", "keystore".toCharArray());
         } catch (KeyStoreException | NoSuchAlgorithmException | UnrecoverableEntryException e) {
-            throw new iRecipeException("Exception occurred while retrieving public key from keystore ", e);
+            throw new IRecipeException("Exception occurred while retrieving public key from keystore ", e);
         }
     }
 
@@ -58,7 +58,7 @@ public class JwtProvider {
         try {
             return keyStore.getCertificate("irecipe").getPublicKey();
         } catch (KeyStoreException e) {
-            throw new iRecipeException("Exception occurred while retrieving the public key");
+            throw new IRecipeException("Exception occurred while retrieving the public key");
         }
     }
 
