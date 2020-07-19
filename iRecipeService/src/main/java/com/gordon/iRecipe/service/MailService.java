@@ -20,7 +20,7 @@ public class MailService {
     private final MailContentBuilder mailContentBuilder;
 
     @Async
-    public void sendMail(NotificationEmail notificationEmail){
+    public void sendMail(NotificationEmail notificationEmail) {
         MimeMessagePreparator messagePreparator = mimeMessage -> {
             MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage);
             messageHelper.setFrom("fuckyou.org");
@@ -32,7 +32,8 @@ public class MailService {
             mailSender.send(messagePreparator);
             log.info("Activation sent");
         } catch (MailException e) {
-           throw new IRecipeException("Exception occurred when sending email to: " + notificationEmail.getRecipient());
+            throw new IRecipeException(
+                "Exception occurred when sending email to: " + notificationEmail.getRecipient());
         }
     }
 }

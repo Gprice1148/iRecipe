@@ -1,19 +1,23 @@
 package com.gordon.iRecipe.security;
 
+import static io.jsonwebtoken.Jwts.parser;
+
 import com.gordon.iRecipe.exception.IRecipeException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.UnrecoverableEntryException;
+import java.security.cert.CertificateException;
+import javax.annotation.PostConstruct;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.PostConstruct;
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.*;
-import java.security.cert.CertificateException;
-
-import static io.jsonwebtoken.Jwts.parser;
 
 
 @Service
@@ -33,19 +37,21 @@ public class JwtProvider {
         }
     }
 
-        public String generateToken(Authentication authentication) {
-            org.springframework.security.core.userdetails.User principal = (User) authentication.getPrincipal();
-            return Jwts.builder()
-                    .setSubject(principal.getUsername())
-                    .signWith(getPrivateKey())
-                    .compact();
-        }
+    public String generateToken(Authentication authentication) {
+        org.springframework.security.core.userdetails.User principal = (User) authentication
+            .getPrincipal();
+        return Jwts.builder()
+            .setSubject(principal.getUsername())
+            .signWith(getPrivateKey())
+            .compact();
+    }
 
     private PrivateKey getPrivateKey() {
         try {
             return (PrivateKey) keyStore.getKey("irecipe", "keystore".toCharArray());
         } catch (KeyStoreException | NoSuchAlgorithmException | UnrecoverableEntryException e) {
-            throw new IRecipeException("Exception occurred while retrieving public key from keystore ", e);
+            throw new IRecipeException(
+                "Exception occurred while retrieving public key from keystore ", e);
         }
     }
 
@@ -62,11 +68,11 @@ public class JwtProvider {
         }
     }
 
-    public String getUsernameFromJwt(String token){
+    public String getUsernameFromJwt(String token) {
         Claims claims = parser()
-                .setSigningKey(getPublicKey())
-                .parseClaimsJws(token)
-                .getBody();
+            .setSigningKey(getPublicKey())
+            .parseClaimsJws(token)
+            .getBody();
 
         return claims.getSubject();
     }
