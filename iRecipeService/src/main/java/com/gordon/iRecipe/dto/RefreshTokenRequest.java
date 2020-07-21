@@ -1,20 +1,17 @@
 package com.gordon.iRecipe.dto;
 
-import java.time.Instant;
+import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthenticationResponse {
+public class RefreshTokenRequest {
 
-    private String authenticationToken;
-    private String username;
-    private Instant expiresAt;
+    @NotBlank
     private String refreshToken;
+    private String username;
 
 }

@@ -69,5 +69,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         return bearerToken;
     }
-    
+
 }

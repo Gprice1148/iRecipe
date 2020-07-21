@@ -2,6 +2,7 @@ package com.gordon.iRecipe.service;
 
 import com.gordon.iRecipe.dto.AuthenticationResponse;
 import com.gordon.iRecipe.dto.LoginRequest;
+import com.gordon.iRecipe.dto.RefreshTokenRequest;
 import com.gordon.iRecipe.dto.RegisterRequest;
 import com.gordon.iRecipe.exception.IRecipeException;
 import com.gordon.iRecipe.model.NotificationEmail;
@@ -32,6 +33,7 @@ public class AuthService {
     private final MailService mailService;
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
+    private final RefreshTokenService refreshTokenService;
 
     @Transactional
     public void signup(RegisterRequest registerRequest) {
@@ -86,7 +88,23 @@ public class AuthService {
                 loginRequest.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String token = jwtProvider.generateToken(authentication);
-        return new AuthenticationResponse(token, loginRequest.getUsername());
+        return AuthenticationResponse.builder()
+            .authenticationToken(token)
+            .refreshToken(refreshTokenService.generateRefreshToken().getToken())
+            .expiresAt(Instant.now().plusMillis(jwtProvider.getJwtExpirationInMillis()))
+            .username(loginRequest.getUsername())
+            .build();
+    }
+
+    public AuthenticationResponse refreshToken(RefreshTokenRequest refreshTokenRequest) {
+        refreshTokenService.validateRefreshToken(refreshTokenRequest.getRefreshToken());
+        String authToken = jwtProvider.generateTokenWithUsername(refreshTokenRequest.getUsername());
+        return AuthenticationResponse.builder()
+            .username(refreshTokenRequest.getUsername())
+            .refreshToken(refreshTokenRequest.getRefreshToken())
+            .authenticationToken(authToken)
+            .expiresAt(Instant.now().plusMillis(jwtProvider.getJwtExpirationInMillis()))
+            .build();
     }
 
 }

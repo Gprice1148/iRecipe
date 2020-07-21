@@ -8,7 +8,6 @@ public class IRecipeException extends RuntimeException {
 
     public IRecipeException(String exMessage) {
         super(exMessage);
-
     }
 
 }

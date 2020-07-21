@@ -1,7 +1,6 @@
 package com.gordon.iRecipe.controller;
 
 import com.gordon.iRecipe.dto.RecipeDto;
-import com.gordon.iRecipe.mapper.RecipeMapper;
 import com.gordon.iRecipe.service.RecipeService;
 import java.util.List;
 import lombok.AllArgsConstructor;
