@@ -18,6 +18,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class User {
+
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long userId;
@@ -30,4 +31,5 @@ public class User {
     private String email;
     private Instant created;
     private boolean enabled;
+
 }

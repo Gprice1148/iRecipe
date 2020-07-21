@@ -17,6 +17,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Table(name = "token")
 public class VerificationToken {
+
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private long id;
@@ -24,4 +25,5 @@ public class VerificationToken {
     @OneToOne(fetch = LAZY)
     private User user;
     private Instant expiryDate;
+
 }

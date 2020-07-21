@@ -10,4 +10,5 @@ public class IRecipeException extends RuntimeException {
         super(exMessage);
 
     }
+
 }

@@ -23,7 +23,7 @@ public class MailService {
     public void sendMail(NotificationEmail notificationEmail) {
         MimeMessagePreparator messagePreparator = mimeMessage -> {
             MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage);
-            messageHelper.setFrom("fuckyou.org");
+            messageHelper.setFrom("mail@mail.mail");
             messageHelper.setTo(notificationEmail.getRecipient());
             messageHelper.setSubject(notificationEmail.getSubject());
             messageHelper.setText(mailContentBuilder.buildEmail(notificationEmail.getBody()));
@@ -36,4 +36,5 @@ public class MailService {
                 "Exception occurred when sending email to: " + notificationEmail.getRecipient());
         }
     }
+
 }

@@ -16,4 +16,5 @@ public class MailContentBuilder {
         context.setVariable("message", message);
         return templateEngine.process("mailTemplate", context);
     }
+
 }

@@ -19,6 +19,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Builder
 public class Recipe {
+
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
@@ -31,4 +32,5 @@ public class Recipe {
 
     @ManyToOne(fetch = LAZY)
     private User user;
+
 }
