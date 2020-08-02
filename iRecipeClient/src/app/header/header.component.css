@@ -1,0 +1,13 @@
+@import url('https://fonts.googleapis.com/css?family=Sacramento&display=swap');
+
+nav {
+    background-color: rgb(255, 182, 47);
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.navbar-title {
+    padding-left: .5em;
+    font-family: Sacramento;
+    font-size: 2.5em;
+}
